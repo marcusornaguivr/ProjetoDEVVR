@@ -21,12 +21,15 @@ public class CursoDAO {
         StringBuilder query = new StringBuilder();
         query.append("INSERT INTO curso(descricao, ementa) VALUES");
         query.append(" ('" + curso.getDescricao() + "',");
-        query.append("'" + curso.getEmenta() + "');");
+        query.append("'" + curso.getEmenta() + "') RETURNING codigo;");
 
         try {
             conn = connection.getConnection();
             st = conn.prepareStatement(query.toString());
-            linhasAfetadas = st.executeUpdate();
+            rs = st.executeQuery();
+            if (rs.next()) {
+                linhasAfetadas = rs.getInt("codigo");
+            }
             conn.commit();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);
@@ -38,6 +41,7 @@ public class CursoDAO {
                 JOptionPane.showMessageDialog(null, "Erro: \n" + e);
             }
         } finally {
+            connection.closeResultset(rs);
             connection.closeStatement(st);
             conn = null;
         }
@@ -50,12 +54,14 @@ public class CursoDAO {
         query.append("UPDATE curso SET ");
         query.append("  descricao= '" + curso.getDescricao() + "'");
         query.append(" , ementa= '" + curso.getEmenta() + "' WHERE ");
-        query.append("codigo =" + curso.getCodigo());
+        query.append("codigo =" + curso.getCodigo() + " RETURNING codigo");
 
         try {
             conn = connection.getConnection();
             st = conn.prepareStatement(query.toString());
-            linhasAfetadas = st.executeUpdate();
+            if (rs.next()) {
+                linhasAfetadas = rs.getInt("codigo");
+            }
             conn.commit();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);

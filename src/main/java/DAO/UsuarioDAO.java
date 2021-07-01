@@ -19,16 +19,19 @@ public class UsuarioDAO {
     public Integer insereUsuario(Usuario usuario) {
         StringBuilder query = new StringBuilder();
         Integer retorno = 0;
-        
+
         query.append("INSERT INTO usuario(nome, login, senha)VALUES ");
         query.append("('" + usuario.getNome() + "' , ");
         query.append("'" + usuario.getLogin() + "' , ");
-        query.append("'" + usuario.getSenha() + "' )");
+        query.append("'" + usuario.getSenha() + "' ) RETURNING id");
 
         try {
             conn = connection.getConnection();
             st = conn.prepareStatement(query.toString());
-            retorno = st.executeUpdate();
+            rs = st.executeQuery();
+            if (rs.next()) {
+                retorno = rs.getInt("id");
+            }
             conn.commit();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
@@ -40,6 +43,7 @@ public class UsuarioDAO {
                 JOptionPane.showMessageDialog(null, "Erro: \n" + ex);
             }
         } finally {
+            connection.closeResultset(rs);
             connection.closeStatement(st);
             conn = null;
         }
@@ -49,17 +53,20 @@ public class UsuarioDAO {
     public Integer atualizarUsuario(Usuario usuario) {
         Integer retorno = 0;
         StringBuilder query = new StringBuilder();
-        
+
         query.append("UPDATE usuario set ");
         query.append("nome = '" + usuario.getNome() + "'");
         query.append(", login = '" + usuario.getLogin() + "'");
         query.append(",senha = '" + usuario.getSenha() + "'");
-        query.append(" WHERE id = " + usuario.getCodigo());
+        query.append(" WHERE id = " + usuario.getCodigo() + " RETURNING id");
 
         try {
             conn = connection.getConnection();
             st = conn.prepareStatement(query.toString());
-            retorno = st.executeUpdate();
+            rs = st.executeQuery();
+            if (rs.next()) {
+                retorno = rs.getInt("id");
+            }
             conn.commit();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Erro: \n" + ex.getMessage());
@@ -80,7 +87,7 @@ public class UsuarioDAO {
     public Boolean deletaUsuario(Usuario usuario) {
         StringBuilder query = new StringBuilder();
         Boolean retorno = false;
-        
+
         query.append("DELETE FROM usuario WHERE id = " + usuario.getCodigo());
 
         try {
@@ -117,7 +124,7 @@ public class UsuarioDAO {
             sql.append(" AND nome ilike '%" + usuario.getNome() + "%'");
         }
         System.out.println(sql.toString());
-        
+
         try {
             conn = connection.getConnection();
             st = conn.prepareStatement(sql.toString());

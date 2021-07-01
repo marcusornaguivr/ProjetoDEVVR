@@ -25,11 +25,14 @@ public class CursoAlunoDAO {
         query.append("INSERT INTO curso_aluno ");
         query.append("(codigo_aluno, codigo_curso) VALUES ");
         query.append("(" + cursoAluno.getAluno().getCodigo() + ", ");
-        query.append(cursoAluno.getCurso().getCodigo() + ");");
+        query.append(cursoAluno.getCurso().getCodigo() + ") RETURNING codigo;");
         try {
             st = conn.prepareStatement(query.toString());
-            retorno = st.executeUpdate();
-                conn.commit();
+            rs = st.executeQuery();
+            if (rs.next()) {
+                retorno = rs.getInt("codigo");
+            }
+            conn.commit();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);
             try {
@@ -40,6 +43,7 @@ public class CursoAlunoDAO {
                 JOptionPane.showMessageDialog(null, "Erro: \n" + e);
             }
         } finally {
+            connection.closeResultset(rs);
             connection.closeStatement(st);
             conn = null;
         }
@@ -52,15 +56,15 @@ public class CursoAlunoDAO {
 
         query.append("SELECT codigo FROM curso_aluno ");
         query.append("WHERE codigo_aluno =" + cursoAluno.getAluno().getCodigo());
-        query.append(" AND codigo_curso =" + cursoAluno.getCurso().getCodigo());
+        query.append(" AND codigo_curso =" + cursoAluno.getCurso().getCodigo() + " RETURNING codigo");
         System.out.println(query.toString());
 
         try {
             conn = connection.getConnection();
             st = conn.prepareStatement(query.toString());
             rs = st.executeQuery();
-            if(rs.next()){
-              retorno = true;  
+            if (rs.next()) {
+                retorno = true;
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Erro: \n" + ex.getMessage());
@@ -75,13 +79,15 @@ public class CursoAlunoDAO {
         query.append("UPDATE curso_aluno SET ");
         query.append("codigo_curso = " + cursoAluno.getCurso().getCodigo() + " , ");
         query.append("codigo_aluno =" + cursoAluno.getAluno().getCodigo());
-        query.append(" WHERE codigo =" + cursoAluno.getCodigo());
+        query.append(" WHERE codigo =" + cursoAluno.getCodigo() + " RETURNING codigo");
 
         try {
             conn = connection.getConnection();
             st = conn.prepareStatement(query.toString());
-            retorno = st.executeUpdate();
-            conn.commit();
+            rs = st.executeQuery();
+            if (rs.next()) {
+                retorno = rs.getInt("codigo");
+            }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Erro: \n" + ex.getMessage());
         } finally {
@@ -184,8 +190,8 @@ public class CursoAlunoDAO {
         }
         return lista;
     }
-    
-    public CursoAluno buscaPorCodigo(CursoAluno cursoAluno){
+
+    public CursoAluno buscaPorCodigo(CursoAluno cursoAluno) {
         CursoAluno ca = new CursoAluno();
         StringBuilder sql = new StringBuilder();
 
@@ -193,14 +199,14 @@ public class CursoAlunoDAO {
         sql.append("INNER JOIN aluno a on a.codigo = ca.codigo_aluno ");
         sql.append("INNER JOIN curso c on c.codigo = ca.codigo_curso ");
         sql.append("WHERE ca.codigo = " + cursoAluno.getCodigo());
-        
+
         try {
 
             conn = connection.getConnection();
             st = conn.prepareStatement(sql.toString());
             rs = st.executeQuery();
 
-           if(rs.next()) {
+            if (rs.next()) {
                 Curso curso = new Curso();
                 Aluno aluno = new Aluno();
 
@@ -224,6 +230,5 @@ public class CursoAlunoDAO {
         }
         return ca;
     }
-    
 
 }
