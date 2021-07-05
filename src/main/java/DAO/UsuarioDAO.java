@@ -58,15 +58,12 @@ public class UsuarioDAO {
         query.append("nome = '" + usuario.getNome() + "'");
         query.append(", login = '" + usuario.getLogin() + "'");
         query.append(",senha = '" + usuario.getSenha() + "'");
-        query.append(" WHERE id = " + usuario.getCodigo() + " RETURNING id");
+        query.append(" WHERE id = " + usuario.getCodigo());
 
         try {
             conn = connection.getConnection();
             st = conn.prepareStatement(query.toString());
-            rs = st.executeQuery();
-            if (rs.next()) {
-                retorno = rs.getInt("id");
-            }
+            retorno = st.executeUpdate();
             conn.commit();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Erro: \n" + ex.getMessage());

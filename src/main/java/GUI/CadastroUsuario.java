@@ -79,9 +79,12 @@ public class CadastroUsuario extends javax.swing.JInternalFrame {
         
        Integer retorno = controller.salvaUsuario(usuario);
         
-        if ( retorno > 0) {
+        if ( retorno > 0 && usuario.getCodigo() <= 0) {
             usuario.setCodigo(retorno);
             txtCodigo.setText(retorno.toString());
+            JOptionPane.showMessageDialog(null, "Salvo com sucesso!");
+        }
+        if ( retorno > 0 && usuario.getCodigo() > 0){
             JOptionPane.showMessageDialog(null, "Salvo com sucesso!");
         }
     }

@@ -45,9 +45,11 @@ public class CadastroAluno extends javax.swing.JInternalFrame {
             return;
         }
         Integer retorno = controller.inserir(aluno);
-        if (retorno > 0) {
+        if (retorno > 0 && aluno.getCodigo() <= 0) {
             aluno.setCodigo(retorno);
             txtCodigo.setText(retorno.toString());
+            JOptionPane.showMessageDialog(null, "Salvo com sucesso!");
+        }else if(retorno > 0 && aluno.getCodigo() > 0){
             JOptionPane.showMessageDialog(null, "Salvo com sucesso!");
         }
     }

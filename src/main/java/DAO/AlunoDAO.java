@@ -50,15 +50,12 @@ public class AlunoDAO {
         Integer linhasAfetadas = 0;
         StringBuilder query = new StringBuilder();
         query.append("UPDATE aluno SET nome ='" + aluno.getNome() + "' ");
-        query.append("WHERE codigo =" + aluno.getCodigo() + " RETURNING codigo");
+        query.append("WHERE codigo =" + aluno.getCodigo());
 
         try {
             conn = connection.getConnection();
             st = conn.prepareStatement(query.toString());
-            rs = st.executeQuery();
-            if(rs.next()){
-                linhasAfetadas = rs.getInt("codigo");
-            }
+            linhasAfetadas = st.executeUpdate();
             conn.commit();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());

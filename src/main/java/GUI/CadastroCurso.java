@@ -50,8 +50,13 @@ public class CadastroCurso extends javax.swing.JInternalFrame {
             return;
         }
         Integer retorno = controller.inserir(curso);
-        if(retorno > 0){
+        
+        if(retorno > 0 && curso.getCodigo() <= 0){
             curso.setCodigo(retorno);
+            txtCodigo.setText(retorno.toString());
+            JOptionPane.showMessageDialog(null, "Salvo com sucesso!");
+        }
+        if(retorno > 0 && curso.getCodigo() > 0){
             JOptionPane.showMessageDialog(null, "Salvo com sucesso!");
         }
     }

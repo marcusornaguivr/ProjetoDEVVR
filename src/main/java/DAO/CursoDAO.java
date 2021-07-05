@@ -54,14 +54,12 @@ public class CursoDAO {
         query.append("UPDATE curso SET ");
         query.append("  descricao= '" + curso.getDescricao() + "'");
         query.append(" , ementa= '" + curso.getEmenta() + "' WHERE ");
-        query.append("codigo =" + curso.getCodigo() + " RETURNING codigo");
+        query.append("codigo =" + curso.getCodigo());
 
         try {
             conn = connection.getConnection();
             st = conn.prepareStatement(query.toString());
-            if (rs.next()) {
-                linhasAfetadas = rs.getInt("codigo");
-            }
+           linhasAfetadas = st.executeUpdate();
             conn.commit();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);

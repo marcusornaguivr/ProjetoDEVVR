@@ -26,10 +26,11 @@ public class CursoAlunoDAO {
         query.append("(codigo_aluno, codigo_curso) VALUES ");
         query.append("(" + cursoAluno.getAluno().getCodigo() + ", ");
         query.append(cursoAluno.getCurso().getCodigo() + ") RETURNING codigo;");
+        System.out.println("inserir");
         try {
             st = conn.prepareStatement(query.toString());
             rs = st.executeQuery();
-            if (rs.next()) {
+            if(rs.next()){
                 retorno = rs.getInt("codigo");
             }
             conn.commit();
@@ -43,7 +44,6 @@ public class CursoAlunoDAO {
                 JOptionPane.showMessageDialog(null, "Erro: \n" + e);
             }
         } finally {
-            connection.closeResultset(rs);
             connection.closeStatement(st);
             conn = null;
         }
@@ -56,7 +56,7 @@ public class CursoAlunoDAO {
 
         query.append("SELECT codigo FROM curso_aluno ");
         query.append("WHERE codigo_aluno =" + cursoAluno.getAluno().getCodigo());
-        query.append(" AND codigo_curso =" + cursoAluno.getCurso().getCodigo() + " RETURNING codigo");
+        query.append(" AND codigo_curso =" + cursoAluno.getCurso().getCodigo());
         System.out.println(query.toString());
 
         try {
@@ -75,19 +75,17 @@ public class CursoAlunoDAO {
     public Integer atualizar(CursoAluno cursoAluno) {
         Integer retorno = 0;
         StringBuilder query = new StringBuilder();
-
+        System.out.println("atualizar");
         query.append("UPDATE curso_aluno SET ");
         query.append("codigo_curso = " + cursoAluno.getCurso().getCodigo() + " , ");
         query.append("codigo_aluno =" + cursoAluno.getAluno().getCodigo());
-        query.append(" WHERE codigo =" + cursoAluno.getCodigo() + " RETURNING codigo");
+        query.append(" WHERE codigo =" + cursoAluno.getCodigo());
 
         try {
             conn = connection.getConnection();
             st = conn.prepareStatement(query.toString());
-            rs = st.executeQuery();
-            if (rs.next()) {
-                retorno = rs.getInt("codigo");
-            }
+            retorno = st.executeUpdate();
+            conn.commit();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Erro: \n" + ex.getMessage());
         } finally {

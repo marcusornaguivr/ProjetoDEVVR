@@ -42,6 +42,7 @@ public class GerenciaClasse extends javax.swing.JInternalFrame {
         alunoController = new AlunoController();
         cursoController = new CursoController();
 
+        txtCodigo.setText(String.valueOf(this.cursoAluno.getCodigo()));
         txtCodAluno.setText(String.valueOf(this.cursoAluno.getAluno().getCodigo()));
         txtCodCurso.setText(String.valueOf(this.cursoAluno.getCurso().getCodigo()));
         txtDescAluno.setText(this.cursoAluno.getAluno().getNome());
@@ -99,13 +100,20 @@ public class GerenciaClasse extends javax.swing.JInternalFrame {
         cursoAluno.setCurso(curso);
         
         Integer retorno = controller.inserir(cursoAluno);
-        if (retorno > 0) {
+        
+        System.out.println("retorno: " + retorno);
+        if (retorno > 0 && cursoAluno.getCodigo() <= 0) {
             cursoAluno.setCodigo(retorno);
+            txtCodigo.setText(retorno.toString());
+            JOptionPane.showMessageDialog(null, "Salvo com sucesso!");
+            
+        }else if(retorno > 0 && cursoAluno.getCodigo() > 0){
             JOptionPane.showMessageDialog(null, "Salvo com sucesso!");
         }
     }
 
     private void limparTela() {
+        txtCodigo.setText("");
         txtCodAluno.setText("");
         txtDescAluno.setText("");
         txtCodCurso.setText("");
@@ -131,6 +139,7 @@ public class GerenciaClasse extends javax.swing.JInternalFrame {
                 txtDescAluno.setText(aluno.getNome());
             }
         } else {
+            txtDescAluno.setText("");
             aluno = null;
         }
     }
@@ -150,6 +159,7 @@ public class GerenciaClasse extends javax.swing.JInternalFrame {
                 txtDescCurso.setText(curso.getDescricao());
             }
         } else {
+            txtDescCurso.setText("");
             curso = null;
         }
     }
